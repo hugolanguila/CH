@@ -10,7 +10,7 @@ export const Decifrar= () =>{
 						useForm({mensaje:'', password:'', pubkey:'', privkey:'', firma:''});
 						
 	const [ formData, setFormData ] = useState({});
-	const { data, loading, err } = useFetch('/decifradorhibrido', formData );
+	const { data, loading, err } = useFetch('https://hugo-hr.herokuapp.com/decifradorhibrido', formData );
 
 	const handleSubmit = (e) =>{
 		e.preventDefault();

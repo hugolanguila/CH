@@ -10,7 +10,7 @@ export const Cifrar= () =>{
 						useForm({mensaje:'', password:'', pubkey:'', privkey:''});
 						
 	const [ formData, setFormData ] = useState({});
-	const { data, loading, err } = useFetch('/cifradorhibrido', formData );
+	const { data, loading, err } = useFetch('https://hugo-hr.herokuapp.com/cifradorhibrido', formData );
 
 	const handleSubmit = (e) =>{
 		e.preventDefault();

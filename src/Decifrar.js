@@ -2,15 +2,39 @@ import React, { useState }from 'react';
 
 import { useForm } from './hooks/useForm';
 import { useFetch } from './hooks/useFetch';
+import { AuxComponentD } from './AuxComponentD';
 
 
 export const Decifrar= () =>{
 
-	const [ { mensaje, password, pubkey, privkey, firma }, handleInputChange, reset ] = 
-						useForm({mensaje:'', password:'', pubkey:'', privkey:'', firma:''});
+	const [ { mensaje, password, pubkey, privkey, firma }, handleInputChange,  ] = 
+						useForm({
+							mensaje:'', 
+							password:'', 
+							pubkey:'', 
+							privkey:'', 
+							firma:''
+						});
+	const [ serv, setServ ]= useState('decifradorhibrido');
+						
+	const [ servicio, setServicio ] =  useState(0);
+	
+	const handleChangeService = (e) =>{
+		e.preventDefault();
+		setServicio(e.target.value);
+		if(e.target.value == 0){
+			setServ('decifradorhibrido');
+		}else if( e.target.value == 1){
+			setServ('decifradorhibridoconfidencialidad');
+		}else if(e.target.value == 2){
+			setServ('verificar');
+		}		
+	}
+	
+	console.log(serv);
 						
 	const [ formData, setFormData ] = useState({});
-	const { data, loading, err } = useFetch('https://hugo-hr.herokuapp.com/decifradorhibrido', formData );
+	const { data } = useFetch(`https://hugo-hr.herokuapp.com/${serv}`, formData );
 
 	const handleSubmit = (e) =>{
 		e.preventDefault();
@@ -31,15 +55,15 @@ export const Decifrar= () =>{
 	return (
 		<>
 			<form onSubmit={ handleSubmit }>
-				<div class="mb-3">
-					<label for="mensaje" 
-						class="form-label"
+				<div className="mb-3">
+					<label htmlFor="mensaje" 
+						className="form-label"
 					>
-						Mensaje a decifrar
+						Mensaje a verificar/decifrar
 					</label>
 	  				<input  
 						type="text" 
-						class="form-control" 
+						className="form-control" 
 						id="mensaje" 
 						name="mensaje"
 						value={ mensaje }
@@ -47,15 +71,15 @@ export const Decifrar= () =>{
 						placeholder=""
 					/>
 				</div>
-				<div class="mb-3">
-					<label for="password" 
-						class="form-label"
+				<div className="mb-3">
+					<label htmlFor="password" 
+						className="form-label"
 					>
-						Secreto cifrado
+						Llave AES cifrada.
 					</label>
 	  				<input  
 						type="text" 
-						class="form-control" 
+						className="form-control" 
 						id="password" 
 						name="password"
 						value={ password }
@@ -63,15 +87,15 @@ export const Decifrar= () =>{
 						placeholder=""
 					/>
 				</div>
-				<div class="mb-3">
+				<div className="mb-3">
 					<label 
-						for="pubkey" 
-						class="form-label"
+						htmlFor="pubkey" 
+						className="form-label"
 					>
 						Llave Publica
 					</label>
 					<textarea 
-						class="form-control" 
+						className="form-control" 
 						id="publickey" 
 						name="pubkey"
 						value={ pubkey }
@@ -81,15 +105,15 @@ export const Decifrar= () =>{
 						
 					></textarea>
 				</div>
-				<div class="mb-3">
+				<div className="mb-3">
 					<label 
-						for="privkey" 
-						class="form-label"
+						htmlFor="privkey" 
+						className="form-label"
 					>
 						Llave Privada
 					</label>
 					<textarea 
-						class="form-control" 
+						className="form-control" 
 						id="privkey" 
 						name="privkey"
 						value={ privkey }
@@ -98,15 +122,15 @@ export const Decifrar= () =>{
 						rows="2"
 					></textarea>
 				</div>
-				<div class="mb-3">
+				<div className="mb-3">
 					<label 
-						for="firma" 
-						class="form-label"
+						htmlFor="firma" 
+						className="form-label"
 					>
 						Firma del mensaje
 					</label>
 					<textarea 
-						class="form-control" 
+						className="form-control" 
 						id="firma" 
 						name="firma"
 						value={ firma }
@@ -115,25 +139,28 @@ export const Decifrar= () =>{
 						rows="2"
 					></textarea>
 				</div>
-				<div class="mb-3">
-					<input type="submit" className="btn btn-primary" value="Decifrar mensaje"/ >
+				
+				<select 
+					className="form-select mb-3" 
+					aria-label="Default select example"
+					onChange={ handleChangeService }
+					selected={servicio}
+				>
+  					<option value="0">Verificar todos los servicios</option>
+					<option value="2">Verificar Autenticacion</option>
+				</select>
+				
+				<div className="mb-3">
+					<input type="submit" className="btn btn-danger" value="Verificar/Decifrar mensaje"/ >
 				</div>
+				
 			</form>
 			
 			{
-				data &&
-				<blockquote className="blockquote mt-2 mb-1">
-					<h5 className="">Mensaje decifrado</h5>
-					<p className="card-text">
-						{ data?.mensaje }
-					</p>
-					<h5 className="">Informacion del mensaje</h5>
-					<p className="card-text">
-						{ data?.info }
-					</p>
-
-				</blockquote>
+					data && <AuxComponentD servicio={servicio} data={data} />	
+						
 			}
+			
 		</>
 	);
 };

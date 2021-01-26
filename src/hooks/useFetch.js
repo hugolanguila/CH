@@ -24,7 +24,7 @@ export const useFetch = ( url, formData ) =>{
 					setState({ data: null, loading: false, error: 'No se pudo cargar la info' })
 				});
 		}	
-	}, [ formData ]);
+	}, [ formData, url ]);
 
 	return state;
 }

@@ -2,15 +2,28 @@ import React, { useState }from 'react';
 
 import { useForm } from './hooks/useForm';
 import { useFetch } from './hooks/useFetch';
+import {AuxComponent } from './AuxComponent';
 
 
 export const Cifrar= () =>{
 
-	const [ { mensaje, password, pubkey, privkey }, handleInputChange, reset ] = 
-						useForm({mensaje:'', password:'', pubkey:'', privkey:''});
-						
+	const [ { mensaje, password, pubkey, privkey }, handleInputChange ] = 
+						useForm({
+							mensaje:'', 
+							password:'', 
+							pubkey:'', 
+							privkey:''
+						});
+	
+	const [ servicio, setServicio ] =  useState(0);
+	
+	const handleChangeService = (e) =>{
+		e.preventDefault();
+		setServicio(e.target.value);		
+	}
+
 	const [ formData, setFormData ] = useState({});
-	const { data, loading, err } = useFetch('https://hugo-hr.herokuapp.com/cifradorhibrido', formData );
+	const { data } = useFetch('https://hugo-hr.herokuapp.com/cifradorhibrido', formData );
 
 	const handleSubmit = (e) =>{
 		e.preventDefault();
@@ -30,15 +43,15 @@ export const Cifrar= () =>{
 	return (
 		<>
 			<form onSubmit={ handleSubmit }>
-				<div class="mb-3">
-					<label for="mensaje" 
-						class="form-label"
+				<div className="mb-3">
+					<label htmlFor="mensaje" 
+						className="form-label"
 					>
 						Mensaje a cifrar
 					</label>
 	  				<input  
 						type="text" 
-						class="form-control" 
+						className="form-control" 
 						id="mensaje" 
 						name="mensaje"
 						value={ mensaje }
@@ -46,15 +59,15 @@ export const Cifrar= () =>{
 						placeholder=""
 					/>
 				</div>
-				<div class="mb-3">
-					<label for="password" 
-						class="form-label"
+				<div className="mb-3">
+					<label htmlFor="password" 
+						className="form-label"
 					>
-						Secreto
+						Llave AES
 					</label>
 	  				<input  
 						type="text" 
-						class="form-control" 
+						className="form-control" 
 						id="password" 
 						name="password"
 						value={ password }
@@ -62,15 +75,15 @@ export const Cifrar= () =>{
 						placeholder=""
 					/>
 				</div>
-				<div class="mb-3">
+				<div className="mb-3">
 					<label 
-						for="pubkey" 
-						class="form-label"
+						htmlFor="pubkey" 
+						className="form-label"
 					>
 						Llave Publica
 					</label>
 					<textarea 
-						class="form-control" 
+						className="form-control" 
 						id="publickey" 
 						name="pubkey"
 						value={ pubkey }
@@ -80,15 +93,15 @@ export const Cifrar= () =>{
 						
 					></textarea>
 				</div>
-				<div class="mb-3">
+				<div className="mb-3">
 					<label 
-						for="privkey" 
-						class="form-label"
+						htmlFor="privkey" 
+						className="form-label"
 					>
 						Llave Privada
 					</label>
 					<textarea 
-						class="form-control" 
+						className="form-control" 
 						id="privkey" 
 						name="privkey"
 						value={ privkey }
@@ -97,28 +110,27 @@ export const Cifrar= () =>{
 						rows="2"
 					></textarea>
 				</div>
-				<div class="mb-3">
+				<select 
+					className="form-select mb-3" 
+					aria-label="Default select example"
+					onChange={ handleChangeService }
+					selected={servicio}
+				>
+  					<option value="0">Todos los servicios</option>
+					<option value="1">Confidencialidad</option>
+					<option value="2">Autenticacion</option>
+				</select>
+				
+				<div className="mb-3">
 					<input type="submit" className="btn btn-primary" value="Cifrar mensaje"/ >
 				</div>
 			</form>
 			
 			{
-				data &&
-				<blockquote className="blockquote mt-2 mb-1">
-					<h5 className="">Texto Cifrado</h5>
-					<p className="card-text">
-						{ data?.mensajeCifrado }
-					</p>
-					<h5 className="">Llave cifrada</h5>
-					<p className="card-text">
-						{ data?.llaveCifrada }
-					</p>
-					<h5 className="">Firma</h5>
-					<p className="card-text">
-						{ data?.firma }
-					</p>
-				</blockquote>
+					data && <AuxComponent servicio={servicio} data={data} mensaje={mensaje}/>	
+						
 			}
+			
 		</>
 	);
 };

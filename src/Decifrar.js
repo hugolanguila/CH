@@ -1,7 +1,7 @@
 import React, { useState }from 'react';
 
 import { useForm } from './hooks/useForm';
-import { useFetch } from './hooks/useFetch';
+import { decifradorhibrido } from './helpers/hibrido';
 import { AuxComponentD } from './AuxComponentD';
 
 
@@ -16,7 +16,7 @@ export const Decifrar= () =>{
 							firma:''
 						});
 	const [ serv, setServ ]= useState('decifradorhibrido');
-						
+	const [ data, setData ] = useState();					
 	const [ servicio, setServicio ] =  useState(0);
 	
 	const handleChangeService = (e) =>{
@@ -25,30 +25,19 @@ export const Decifrar= () =>{
 		if(e.target.value == 0){
 			setServ('decifradorhibrido');
 		}else if( e.target.value == 1){
-			setServ('decifradorhibridoconfidencialidad');
+			setServ('decifraraes');
 		}else if(e.target.value == 2){
 			setServ('verificar');
 		}		
 	}
-	
-	console.log(serv);
-						
-	const [ formData, setFormData ] = useState({});
-	const { data } = useFetch(`https://hugo-hr.herokuapp.com/${serv}`, formData );
 
-	const handleSubmit = (e) =>{
+	const handleSubmit = async(e) =>{
 		e.preventDefault();
-		if( mensaje.length > 1 && password.length > 1){
-			const body = new FormData();
-			body.append( 'mensaje', mensaje );
-			body.append( 'password', password );
-			body.append( 'publickey', pubkey );
-			body.append( 'privatekey', privkey );
-			body.append( 'firma', firma );
-			setFormData({
-				method: 'POST',
-				body
-			});	
+		let newData = await decifradorhibrido( mensaje, password, pubkey, privkey, firma, serv );
+		if( newData.ok ){
+			setData( newData );
+		}else{
+			window.alert('No se pudo realizar la operacion que solicitaste');
 		}
 	};
 	
@@ -147,6 +136,7 @@ export const Decifrar= () =>{
 					selected={servicio}
 				>
   					<option value="0">Verificar todos los servicios</option>
+  					<option value="1">Confidencialidad</option>
 					<option value="2">Verificar Autenticacion</option>
 				</select>
 				

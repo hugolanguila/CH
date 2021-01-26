@@ -33,7 +33,7 @@ export const AuxComponent = ({ data, servicio, mensaje }) =>{
 				</p>
 				<h5 className="">Firma</h5>
 				<p className="card-text">
-					{ data?.llaveCifrada }
+					{ data?.firma }
 				</p>
 			</>
 		);

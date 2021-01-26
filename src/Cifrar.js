@@ -1,9 +1,8 @@
 import React, { useState }from 'react';
 
 import { useForm } from './hooks/useForm';
-import { useFetch } from './hooks/useFetch';
-import {AuxComponent } from './AuxComponent';
-
+import { cifradorhibrido } from './helpers/hibrido';
+import { AuxComponent } from './AuxComponent';
 
 export const Cifrar= () =>{
 
@@ -15,28 +14,33 @@ export const Cifrar= () =>{
 							privkey:''
 						});
 	
+	const [ serv, setServ ]= useState('cifradorhibrido');
 	const [ servicio, setServicio ] =  useState(0);
+	const [ data, setData ] = useState();
 	
 	const handleChangeService = (e) =>{
 		e.preventDefault();
-		setServicio(e.target.value);		
+		setServicio(e.target.value);
+		if(e.target.value == 0){
+			setServ('cifradorhibrido');
+		}else if( e.target.value == 1){
+			setServ('cifraraes');
+		}else if(e.target.value == 2){
+			setServ('firmar');
+		}		
 	}
 
-	const [ formData, setFormData ] = useState({});
-	const { data } = useFetch('https://hugo-hr.herokuapp.com/cifradorhibrido', formData );
-
-	const handleSubmit = (e) =>{
+	const handleSubmit = async(e) =>{
 		e.preventDefault();
-		if( mensaje.length > 1 && password.length > 1){
-			const body = new FormData();
-			body.append( 'mensaje', mensaje );
-			body.append( 'password', mensaje );
-			body.append( 'publickey', pubkey );
-			body.append( 'privatekey', privkey );
-			setFormData({
-				method: 'POST',
-				body
-			});	
+		if( servicio === 0 ){
+			await cifradorhibrido( mensaje, password, pubkey, privkey, servicio, serv);
+		}else{
+			let newData = await cifradorhibrido( mensaje, password, pubkey, privkey, servicio, serv);
+			if( newData.ok ){
+				setData( newData );
+			}else{
+				window.alert('No se pudo realizar la operacion que solicitaste');
+			}
 		}
 	};
 	

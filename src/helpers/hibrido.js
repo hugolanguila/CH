@@ -5,7 +5,7 @@ export const cifradorhibrido = async ( mensaje, password, publickey, privatekey,
 	
 	const body = new FormData();
 	body.append( 'mensaje', mensaje );
-	body.append( 'password', mensaje );
+	body.append( 'password', password );
 	body.append( 'publickey', publickey );
 	body.append( 'privatekey', privatekey );
 	
